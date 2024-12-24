@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body,Get } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { ScheduleRoom1, ScheduleRoom2, ScheduleRoom3, ScheduleRoom4, ScheduleRoom5, ScheduleRoom6, ScheduleRoom7 } from './schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -7,6 +7,34 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
+  @Get('room1') 
+  async getRoom1Events() {
+    return this.scheduleService.getRoom1Events(); 
+  }
+  @Get('room2') 
+  async getRoom2Events() {
+    return this.scheduleService.getRoom2Events(); 
+  }
+  @Get('room3') 
+  async getRoom3Events() {
+    return this.scheduleService.getRoom3Events(); 
+  }
+  @Get('room4') 
+  async getRoom4Events() {
+    return this.scheduleService.getRoom4Events(); 
+  }
+  @Get('room5') 
+  async getRoom5Events() {
+    return this.scheduleService.getRoom5Events(); 
+  }
+  @Get('room6') 
+  async getRoom6Events() {
+    return this.scheduleService.getRoom6Events(); 
+  }
+  @Get('room7') 
+  async getRoom7Events() {
+    return this.scheduleService.getRoom7Events(); 
+  }
   @Post('room1')
   createRoom1Event(@Body() data: CreateScheduleDto) {
     return this.scheduleService.createRoom1Event(data);

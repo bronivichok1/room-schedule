@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ScheduleRoom1, ScheduleRoom2, ScheduleRoom3, ScheduleRoom4, ScheduleRoom5, ScheduleRoom6, ScheduleRoom7 } from './schedule.entity';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ScheduleService {
@@ -23,6 +24,27 @@ export class ScheduleService {
 
   ) {}
 
+  async getRoom1Events(): Promise<ScheduleRoom1[]> {
+    return this.scheduleRoom1Repository.find();
+  }
+  async getRoom2Events(): Promise<ScheduleRoom2[]> {
+    return this.scheduleRoom2Repository.find();
+  }
+  async getRoom3Events(): Promise<ScheduleRoom3[]> {
+    return this.scheduleRoom3Repository.find();
+  }
+  async getRoom4Events(): Promise<ScheduleRoom4[]> {
+    return this.scheduleRoom4Repository.find();
+  }
+  async getRoom5Events(): Promise<ScheduleRoom5[]> {
+    return this.scheduleRoom5Repository.find();
+  }
+  async getRoom6Events(): Promise<ScheduleRoom6[]> {
+    return this.scheduleRoom6Repository.find();
+  }
+  async getRoom7Events(): Promise<ScheduleRoom7[]> {
+    return this.scheduleRoom7Repository.find();
+  }
   // Метод для добавления события в первую комнату
   async createRoom1Event(data: { title: string; start: Date; end: Date }): Promise<ScheduleRoom1> {
     const event = this.scheduleRoom1Repository.create(data);
@@ -59,7 +81,35 @@ export class ScheduleService {
     const event = this.scheduleRoom7Repository.create(data);
     return this.scheduleRoom7Repository.save(event);
   }
+// Метод для удаления старых событий для всех комнат
+async deleteOldEvents() {
+  const oneMonthsAgo = new Date();
+  oneMonthsAgo.setMonth(oneMonthsAgo.getMonth() - 1);
 
+  // Удаляем старые события для каждой комнаты
+  await this.deleteOldEventsFromRoom(this.scheduleRoom1Repository, oneMonthsAgo);
+  await this.deleteOldEventsFromRoom(this.scheduleRoom2Repository, oneMonthsAgo);
+  await this.deleteOldEventsFromRoom(this.scheduleRoom3Repository, oneMonthsAgo);
+  await this.deleteOldEventsFromRoom(this.scheduleRoom4Repository, oneMonthsAgo);
+  await this.deleteOldEventsFromRoom(this.scheduleRoom5Repository, oneMonthsAgo);
+  await this.deleteOldEventsFromRoom(this.scheduleRoom6Repository, oneMonthsAgo);
+  await this.deleteOldEventsFromRoom(this.scheduleRoom7Repository, oneMonthsAgo);
+}
 
+// Универсальный метод для удаления старых событий из заданной комнаты
+private async deleteOldEventsFromRoom(repository: Repository<any>, thresholdDate: Date) {
+  // Используем метод createQueryBuilder для удаления старых событий
+  await repository.createQueryBuilder()
+    .delete()
+    .from(repository.metadata.name) // Получаем название таблицы из метаданных
+    .where('start < :date', { date: thresholdDate })
+    .execute();
+}
+
+// Запускаем метод удаления старых событий каждый день в полночь
+@Cron('0 0 * * *')
+handleCron() {
+  this.deleteOldEvents();
+}
   // Добавьте дополнительные методы для других комнат
 }

@@ -3,22 +3,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from './schedule/schedule.module';
 import { AppController } from './app.controller'; 
 import { AppService } from './app.service';
-
+import { ConfigModule } from '@nestjs/config';
+import {ScheduleService} from './schedule/schedule.service'
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost', // ваш хост
-      port: 5432,        // порт PostgreSQL
-      username: 'your_username',
-      password: 'your_password',
-      database: 'your_database',
-      autoLoadEntities: true, // автоматически загружать все сущности
-      synchronize: true,       // автоматически синхронизировать структуру базы данных
+      type: process.env.DB_TYPE as 'postgres',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     ScheduleModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
+
