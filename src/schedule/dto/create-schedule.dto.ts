@@ -1,6 +1,7 @@
 import { IsString, IsDate } from 'class-validator';
 
 export class CreateScheduleDto {
+
   @IsString()
   title: string;
 

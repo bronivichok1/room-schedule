@@ -1,4 +1,4 @@
-import { Controller, Post, Body,Get } from '@nestjs/common';
+import { Controller, Post, Body,Get, Delete,Param } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { ScheduleRoom1, ScheduleRoom2, ScheduleRoom3, ScheduleRoom4, ScheduleRoom5, ScheduleRoom6, ScheduleRoom7 } from './schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -69,4 +69,37 @@ export class ScheduleController {
   createRoom7Event(@Body() data: CreateScheduleDto) {
     return this.scheduleService.createRoom7Event(data);
   }
+  @Delete('room1/:id')
+  async deleteRoom1Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom1Event(id);
+  }
+
+  @Delete('room2/:id')
+  async deleteRoom2Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom2Event(id);
+  }
+
+  @Delete('room3/:id')
+  async deleteRoom3Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom3Event(id);
+  }
+  @Delete('room4/:id')
+  async deleteRoom4Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom4Event(id);
+  }
+
+  @Delete('room5/:id')
+  async deleteRoom5Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom5Event(id);
+  }
+
+  @Delete('room6/:id')
+  async deleteRoom6Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom6Event(id);
+  }
+  @Delete('room7/:id')
+  async deleteRoom7Event(@Param('id') id: string) {
+    return this.scheduleService.deleteRoom7Event(id);
+  }
+
 }

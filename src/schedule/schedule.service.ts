@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ScheduleRoom1, ScheduleRoom2, ScheduleRoom3, ScheduleRoom4, ScheduleRoom5, ScheduleRoom6, ScheduleRoom7 } from './schedule.entity';
@@ -45,13 +45,12 @@ export class ScheduleService {
   async getRoom7Events(): Promise<ScheduleRoom7[]> {
     return this.scheduleRoom7Repository.find();
   }
-  // Метод для добавления события в первую комнату
+
   async createRoom1Event(data: { title: string; start: Date; end: Date }): Promise<ScheduleRoom1> {
     const event = this.scheduleRoom1Repository.create(data);
     return this.scheduleRoom1Repository.save(event);
   }
 
-  // Метод для добавления события во вторую комнату
   async createRoom2Event(data: { title: string; start: Date; end: Date }): Promise<ScheduleRoom2> {
     const event = this.scheduleRoom2Repository.create(data);
     return this.scheduleRoom2Repository.save(event);
@@ -81,12 +80,97 @@ export class ScheduleService {
     const event = this.scheduleRoom7Repository.create(data);
     return this.scheduleRoom7Repository.save(event);
   }
-// Метод для удаления старых событий для всех комнат
+
+  async deleteRoom1Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom1Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom1Repository.remove(event);
+  }
+
+  async deleteRoom2Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom2Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom2Repository.remove(event);
+  }
+
+  async deleteRoom3Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom3Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom3Repository.remove(event);
+  }
+
+  async deleteRoom4Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom4Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom4Repository.remove(event);
+  }
+
+  async deleteRoom5Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom5Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom5Repository.remove(event);
+  }
+
+  async deleteRoom6Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom6Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom6Repository.remove(event);
+  }
+
+  async deleteRoom7Event(id: string): Promise<void> {
+    const eventId: number = parseInt(id, 10);
+    if (isNaN(eventId)) {
+      throw new NotFoundException('ID должен быть числом');
+    }
+    const event = await this.scheduleRoom7Repository.findOne({ where: { id: eventId } });
+    if (!event) {
+      throw new NotFoundException(`Событие с ID "${eventId}" не найдено`);
+    }
+    await this.scheduleRoom7Repository.remove(event);
+  }
+
+
+
 async deleteOldEvents() {
   const oneMonthsAgo = new Date();
   oneMonthsAgo.setMonth(oneMonthsAgo.getMonth() - 1);
 
-  // Удаляем старые события для каждой комнаты
   await this.deleteOldEventsFromRoom(this.scheduleRoom1Repository, oneMonthsAgo);
   await this.deleteOldEventsFromRoom(this.scheduleRoom2Repository, oneMonthsAgo);
   await this.deleteOldEventsFromRoom(this.scheduleRoom3Repository, oneMonthsAgo);
@@ -96,20 +180,16 @@ async deleteOldEvents() {
   await this.deleteOldEventsFromRoom(this.scheduleRoom7Repository, oneMonthsAgo);
 }
 
-// Универсальный метод для удаления старых событий из заданной комнаты
 private async deleteOldEventsFromRoom(repository: Repository<any>, thresholdDate: Date) {
-  // Используем метод createQueryBuilder для удаления старых событий
   await repository.createQueryBuilder()
     .delete()
-    .from(repository.metadata.name) // Получаем название таблицы из метаданных
+    .from(repository.metadata.name)
     .where('start < :date', { date: thresholdDate })
     .execute();
 }
 
-// Запускаем метод удаления старых событий каждый день в полночь
 @Cron('0 0 * * *')
 handleCron() {
   this.deleteOldEvents();
 }
-  // Добавьте дополнительные методы для других комнат
 }
