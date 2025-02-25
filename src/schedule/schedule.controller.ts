@@ -16,6 +16,11 @@ export class ScheduleController {
   createRoomEvent(@Body() data: CreateScheduleDto) {
     return this.scheduleService.createRoomEvent(data);
   }
+
+  @Get('status') 
+  async getStatusEvents() {
+    return this.scheduleService.getStatusEvents(); 
+  }
   
   @Delete('room/:id')
   async deleteRoomEvent(@Param('id') id: string) {

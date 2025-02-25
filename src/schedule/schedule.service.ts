@@ -22,6 +22,38 @@ export class ScheduleService {
     }
   }
 
+  async getStatusEvents(): Promise<any[]> {
+    const roomsStatus = [];
+  
+    for (let roomNumber = 1; roomNumber <= 6; roomNumber++) {
+
+      const events = await this.scheduleRoomRepository.find({ where: { number: roomNumber } });
+      const now = new Date(); 
+  
+      const activeEvent = events.find(event => now >= event.start && now <= event.end);
+  
+      if (activeEvent) {
+        roomsStatus.push({
+          number: roomNumber,
+          name: activeEvent.name,
+          title: activeEvent.title,
+          start: activeEvent.start,
+          end: activeEvent.end,
+          status: true,
+        });
+      } else {
+        roomsStatus.push({
+          number: roomNumber,
+          status: false,
+        });
+      }
+    }
+  
+    return roomsStatus;
+  }
+  
+  
+  
   async createRoomEvent(data: { number:number; name:string; title: string; start: Date; end: Date }): Promise<ScheduleRoom> {
     const event = this.scheduleRoomRepository.create(data);
     return this.scheduleRoomRepository.save(event);
