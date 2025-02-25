@@ -1,6 +1,12 @@
-import { IsString, IsDate } from 'class-validator';
+import { IsString, IsDate, IsNumber} from 'class-validator';
 
 export class CreateScheduleDto {
+
+  @IsNumber()
+  number:number;
+
+  @IsString()
+  name: string;
 
   @IsString()
   title: string;
