@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import {ScheduleService} from './schedule/schedule.service'
+import { AuthModule } from './auth/auth.module';
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -19,6 +22,7 @@ import {ScheduleService} from './schedule/schedule.service'
       synchronize: true,
     }),
     ScheduleModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

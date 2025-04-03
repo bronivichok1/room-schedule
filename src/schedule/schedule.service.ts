@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ScheduleRoom} from './schedule.entity';
 import { Cron } from '@nestjs/schedule';
+import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 
 @Injectable()
 export class ScheduleService {
@@ -24,11 +25,18 @@ export class ScheduleService {
 
   async getStatusEvents(): Promise<any[]> {
     const roomsStatus = [];
+    const now = new Date();
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(now.setHours(23, 59, 59, 999));
   
     for (let roomNumber = 1; roomNumber <= 6; roomNumber++) {
-
-      const events = await this.scheduleRoomRepository.find({ where: { number: roomNumber } });
-      const now = new Date(); 
+      const events = await this.scheduleRoomRepository.find({
+        where: {
+          number: roomNumber,
+          start: MoreThanOrEqual(startOfDay),
+          end: LessThanOrEqual(endOfDay),
+        },
+      });
   
       const activeEvent = events.find(event => now >= event.start && now <= event.end);
   
@@ -37,6 +45,7 @@ export class ScheduleService {
           number: roomNumber,
           name: activeEvent.name,
           title: activeEvent.title,
+          titleorg: activeEvent.titleorg,
           start: activeEvent.start,
           end: activeEvent.end,
           status: true,
@@ -54,7 +63,7 @@ export class ScheduleService {
   
   
   
-  async createRoomEvent(data: { number:number; name:string; title: string; start: Date; end: Date }): Promise<ScheduleRoom> {
+  async createRoomEvent(data: { number:number; name:string; title: string; titleorg: string; start: Date; end: Date }): Promise<ScheduleRoom> {
     const event = this.scheduleRoomRepository.create(data);
     return this.scheduleRoomRepository.save(event);
   }

@@ -15,6 +15,9 @@ export class ScheduleRoom {
   title: string;
 
   @Column()
+  titleorg: string;
+
+  @Column()
   start: Date;
 
   @Column()

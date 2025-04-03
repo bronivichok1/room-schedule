@@ -11,6 +11,9 @@ export class CreateScheduleDto {
   @IsString()
   title: string;
 
+  @IsString()
+  titleorg: string;
+
   @IsDate()
   start: Date;
 
