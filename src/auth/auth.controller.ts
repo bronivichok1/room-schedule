@@ -1,7 +1,6 @@
 import { Controller, Post, Body, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
-import { Get } from '@nestjs/common';
 
 
 @Controller('auth')
@@ -13,7 +12,6 @@ export class AuthController {
         const { username, password } = body;
         try {
             const user = await this.authService.validateUser(username, password);
-            // Сохраняем идентификатор пользователя в сессии
             return res.status(200).json({ message: 'Login successful', user });
         } catch (error) {
             return res.status(401).json({ message: 'Authentication failed', error: error.message });

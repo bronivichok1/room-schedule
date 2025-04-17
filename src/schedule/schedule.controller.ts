@@ -1,6 +1,5 @@
 import { Controller, Post, Body,Get, Delete,Param } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
-import { ScheduleRoom} from './schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 
 @Controller('schedule')
