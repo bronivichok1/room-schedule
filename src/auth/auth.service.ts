@@ -25,7 +25,6 @@ export class AuthService {
                 }
 
                 if (auth) {
-                    // Если аутентификация успешна, получим детали пользователя
                     this.getUserDetails(username, resolve, reject);
                 } else {
                     reject(new Error('Invalid credentials'));

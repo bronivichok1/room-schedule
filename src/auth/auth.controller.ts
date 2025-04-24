@@ -1,31 +1,69 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, Get, UnauthorizedException, InternalServerErrorException, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
+import { promisify } from 'util';
 
+interface SessionRequest extends Request {
+  session: any;
+}
+
+const destroySession = promisify(
+  (session: any, callback: (err: any) => void) => session.destroy(callback)
+);
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-    @Post('login')
-    async login(@Body() body, @Res() res: Response, @Req() req: Request) {
-        const { username, password } = body;
-        try {
-            const user = await this.authService.validateUser(username, password);
-            return res.status(200).json({ message: 'Login successful', user });
-        } catch (error) {
-            return res.status(401).json({ message: 'Authentication failed', error: error.message });
-        }
+  @Post('login')
+  @HttpCode(200)
+  async login(
+    @Body() body,
+    @Req() req: SessionRequest,
+  ) {
+    const { username, password } = body;
+    const user = await this.authService.validateUser(username, password);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    @Post('logout')
-    async logout(@Req() req: Request, @Res() res: Response) {
-        req.session.destroy(err => {
-            if (err) {
-                return res.status(500).json({ message: 'Could not log out' });
-            }
-            return res.status(200).json({ message: 'Logout successful' });
-        });
-    }
+    req.session.userId = user.username; // логин как ID для сессии
+    req.session.username = user.username;
+    req.session.isAuthenticated = true;
+    req.session.name = user.name; 
+    req.session.title = user.title; 
 
+    return { message: 'Login successful', user: { username: user.username, name: user.name, title: user.title } };
+  }
+
+  @Get('status')
+  @HttpCode(200)
+  getStatus(@Req() req: SessionRequest) {
+      if (req.session && req.session.isAuthenticated) {
+          return {
+              isAuthenticated: true,
+              userId: req.session.userId,
+              username: req.session.username,
+              name: req.session.name, 
+              title: req.session.title, 
+          };
+      } else {
+          return { isAuthenticated: false, message: 'Not authenticated' };
+      }
+  }
+
+  @Post('logout')
+  @HttpCode(200)
+  async logout(@Req() req: SessionRequest, @Res({ passthrough: true }) res: Response) {
+    try {
+      await destroySession(req.session);
+      res.clearCookie('connect.sid');
+      return { message: 'Logout successful' };
+    } catch (err) {
+      console.error('Failed to destroy session:', err);
+      res.clearCookie('connect.sid');
+      throw new InternalServerErrorException('Could not log out');
+    }
+  }
 }
