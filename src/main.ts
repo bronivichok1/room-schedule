@@ -25,7 +25,7 @@ async function bootstrap() {
         httpOnly: true, 
         maxAge: 1000 * 60 * 60 * 2,
         sameSite: 'lax',// тут none на релизе
-        secure: true // тут true на релизе
+        secure: false // тут true на релизе
       }
     }),
   );
