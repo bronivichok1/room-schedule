@@ -24,7 +24,7 @@ async function bootstrap() {
       cookie: {
         httpOnly: true, 
         maxAge: 1000 * 60 * 60 * 2,
-        sameSite: 'none',// тут none на релизе
+        sameSite: 'lax',// тут none на релизе
         secure: true // тут true на релизе
       }
     }),
