@@ -27,7 +27,7 @@ export class AuthService {
                 if (auth) {
                     this.getUserDetails(username, resolve, reject);
                 } else {
-                    reject(new Error('Invalid credentials'));
+                    reject(new Error('Недействительные учетные данные'));
                 }
             });
         });
@@ -45,7 +45,7 @@ export class AuthService {
                 const name = user.cn || 'No cn available';
                 resolve({ name, title });
             } else {
-                reject(new Error('User not found'));
+                reject(new Error('Пользователь не найден'));
             }
         });
     }

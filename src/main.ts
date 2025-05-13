@@ -24,13 +24,13 @@ async function bootstrap() {
       cookie: {
         httpOnly: true, 
         maxAge: 1000 * 60 * 60 * 2,
-        sameSite: 'lax',// тут none на релизе
-        secure: false // тут true на релизе
+        sameSite: 'none',// тут none на релизе
+        secure: true // тут true на релизе
       }
     }),
   );
 
   app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT, /*'127.0.0.1'*/);
+  await app.listen(process.env.PORT, '127.0.0.1');
 }
 bootstrap();

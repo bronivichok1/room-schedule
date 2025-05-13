@@ -28,13 +28,13 @@ export class AuthController {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    req.session.userId = user.username; // логин как ID для сессии
+    req.session.userId = user.username; 
     req.session.username = user.username;
     req.session.isAuthenticated = true;
     req.session.name = user.name; 
     req.session.title = user.title; 
 
-    return { message: 'Login successful', user: { username: user.username, name: user.name, title: user.title } };
+    return { message: 'Вход успешен', user: { username: user.username, name: user.name, title: user.title } };
   }
 
   @Get('status')
@@ -49,7 +49,7 @@ export class AuthController {
               title: req.session.title, 
           };
       } else {
-          return { isAuthenticated: false, message: 'Not authenticated' };
+          return { isAuthenticated: false, message: 'Не аутентифицирован' };
       }
   }
 
@@ -59,9 +59,8 @@ export class AuthController {
     try {
       await destroySession(req.session);
       res.clearCookie('connect.sid');
-      return { message: 'Logout successful' };
+      return { message: 'Выход выполнен успешно' };
     } catch (err) {
-      console.error('Failed to destroy session:', err);
       res.clearCookie('connect.sid');
       throw new InternalServerErrorException('Could not log out');
     }
